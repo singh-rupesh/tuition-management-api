@@ -329,3 +329,13 @@ def record_payment(
     db.refresh(new_payment)
 
     return new_payment
+
+from models import Payment
+
+@app.get("/payments")
+def get_payments(
+    db: Session = Depends(get_db),
+    current_admin: str = Depends(get_current_admin)
+):
+    payments = db.query(Payment).all()
+    return payments

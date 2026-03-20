@@ -25,14 +25,20 @@ function Login() {
     formData.append("username", form.username);
     formData.append("password", form.password);
 
-    API.post("/login", formData)
-      .then(res => {
-        localStorage.setItem("token", res.data.access_token);
-        alert("Login successful ✅");
-
-        navigate("/students");   // ✅ REDIRECT AFTER LOGIN
-      })
-      .catch(err => console.log(err));
+    API.post("/login", formData, {
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  }
+})
+.then(res => {
+  localStorage.setItem("token", res.data.access_token);
+  alert("Login successful ✅");
+  navigate("/students");
+})
+.catch(err => {
+  console.log(err);
+  alert("Invalid username or password ❌");
+});
   };
 
   return (
