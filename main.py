@@ -339,3 +339,59 @@ def get_payments(
 ):
     payments = db.query(Payment).all()
     return payments
+
+
+# ================= PAYMENT STATUS (PROTECTED) =================
+
+@app.get("/payment-status")
+def payment_status(
+    month: int,
+    year: int,
+    db: Session = Depends(get_db),
+    current_admin: str = Depends(get_current_admin)
+):
+    students = db.query(Student).all()
+
+    result = []
+
+    for s in students:
+
+        # ✅ Count present days for month
+        present_days = db.query(Attendance).filter(
+            Attendance.student_id == s.id,
+            Attendance.present == True,
+            extract("year", Attendance.date) == year,
+            extract("month", Attendance.date) == month
+        ).count()
+
+        total_fee = present_days * s.fee_per_day
+
+        # ✅ Total paid
+        total_paid = db.query(func.coalesce(func.sum(Payment.amount_paid), 0)).filter(
+            Payment.student_id == s.id,
+            Payment.month == month,
+            Payment.year == year
+        ).scalar()
+
+        remaining = total_fee - total_paid
+
+        # ✅ Status logic
+        if total_fee == 0:
+            status = "No Attendance"
+        elif remaining <= 0:
+            status = "Paid"
+        elif total_paid == 0:
+            status = "Unpaid"
+        else:
+            status = "Partial"
+
+        result.append({
+            "student_id": s.id,
+            "student": s.name,
+            "total_fee": total_fee,
+            "paid": total_paid,
+            "remaining": remaining,
+            "status": status
+        })
+
+    return result

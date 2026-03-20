@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import API from "../api";
 
 function Payments() {
-
   const [students, setStudents] = useState([]);
   const [payments, setPayments] = useState([]);
 
@@ -65,7 +64,6 @@ function Payments() {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-
       <h1 className="text-2xl font-bold mb-6">Payments</h1>
 
       {/* Form */}
@@ -73,7 +71,6 @@ function Payments() {
         onSubmit={handleSubmit}
         className="bg-white p-4 rounded-xl shadow flex gap-3 mb-6"
       >
-
         <select
           name="student_id"
           value={form.student_id}
@@ -115,12 +112,10 @@ function Payments() {
         <button className="bg-green-500 text-white px-5 rounded hover:bg-green-600">
           Add
         </button>
-
       </form>
 
       {/* ✅ Payment Table */}
       <table className="w-full bg-white rounded-xl shadow overflow-hidden">
-
         <thead className="bg-gray-200">
           <tr>
             <th className="p-3">Student</th>
@@ -134,17 +129,34 @@ function Payments() {
           {payments.map((p) => (
             <tr key={p.id} className="border-b hover:bg-gray-50">
               <td className="p-3">
-                {students.find(s => s.id === p.student_id)?.name || "Unknown"}
+                {students.find((s) => s.id === p.student_id)?.name || "Unknown"}
               </td>
               <td className="p-3">₹{p.amount_paid}</td>
-              <td className="p-3">{p.month}</td>
+              <td className="p-3">
+                <td>
+                  {
+                    [
+                      "Jan",
+                      "Feb",
+                      "Mar",
+                      "Apr",
+                      "May",
+                      "Jun",
+                      "Jul",
+                      "Aug",
+                      "Sep",
+                      "Oct",
+                      "Nov",
+                      "Dec",
+                    ][p.month - 1]
+                  }
+                </td>
+              </td>
               <td className="p-3">{p.year}</td>
             </tr>
           ))}
         </tbody>
-
       </table>
-
     </div>
   );
 }
