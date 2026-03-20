@@ -1,4 +1,5 @@
 # 1️⃣ Imports
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -24,6 +25,18 @@ from auth import (
 
 # 2️⃣ Create app
 app = FastAPI()
+
+origins = [
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # allow frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 3️⃣ Create tables
 Base.metadata.create_all(bind=engine)
